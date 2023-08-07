@@ -8,8 +8,7 @@ namespace terrain
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
 
-        public UnityEngine.Object terrainManager_;
-        public ITerrainManager terrainManager => terrainManager_ as ITerrainManager;
+        public ITerrainManager terrainManager { get; set; }
         public bool displayWireframe;
 
 

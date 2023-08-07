@@ -6,16 +6,18 @@ namespace terrain
 {
     // Terrain Manager Class
     [CreateAssetMenu(fileName = "TerrainManager", menuName = "Terrain Manager")]
-    public class TerrainManager : ScriptableObject, ITerrainManager
+    public class TerrainManager : ITerrainManager
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
 
         [field: SerializeField] public TerrainProperties terrainProperties { get; set; }
+        [SerializeField] public string managerType { get; set; }
         private Chunk.ChunkMB[] chunks;
 
         //--------------------------|| METHODS ||----------------------------//
 
-        TerrainManager() { }
+        public TerrainManager() { }
+        public TerrainManager(string managerType_) { managerType = managerType_; }
 
         //TODO : Let user chose the chunk generation type : fix, cameraField, radius
         public void GenerateChunks(UnityEngine.GameObject terrainManager, string terrainName)
