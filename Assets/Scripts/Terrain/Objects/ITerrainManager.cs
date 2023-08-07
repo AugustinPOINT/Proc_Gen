@@ -7,7 +7,7 @@ namespace terrain
     public interface ITerrainManager
     {
         TerrainProperties terrainProperties { get; set; }
-        void GenerateChunks(Transform a, string b);
+        void GenerateChunks(UnityEngine.GameObject a, string b);
         void ManageChunks();
     }
 }

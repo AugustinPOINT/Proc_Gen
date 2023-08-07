@@ -72,7 +72,7 @@ public class TerrainManagerEditor : Editor
             {
                 if (terrain.terrainManager != null)
                 {
-                    terrain.terrainManager.GenerateChunks(terrain.transform, "editor terrain");
+                    terrain.terrainManager.GenerateChunks(terrain.gameObject, "editor terrain");
                 }
             }
         }

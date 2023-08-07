@@ -8,21 +8,16 @@ namespace terrain.Chunk
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
 
-        public Transform terrainManagerTransform;
         public Chunk chunk; // Contains all the attributes and methods to generate, manage, store the chunk's terrain
 
 
         //-------------------------|| METHODS ||-----------------------------//
 
-        /* Sets the reference to the transform that generated this chunk */
-        public void SetTerrainManagerTransform(Transform terrainManagerTransform)
-        {
-            this.terrainManagerTransform = terrainManagerTransform;
-        }
 
         /* Called when the object or its parent get selected */
         private void OnDrawGizmosSelected()
         {
+            Transform terrainManagerTransform = this.transform.parent.parent;
             if (terrainManagerTransform.GetComponent<TerrainManagerMB>().displayWireframe)
             {
                 DrawWireRectangle(transform.position, terrainManagerTransform.GetComponent<TerrainManagerMB>().terrainManager.terrainProperties.chunkSize);

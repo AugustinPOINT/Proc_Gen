@@ -26,7 +26,7 @@ namespace terrain
                 {
                     editorTerrain.gameObject.SetActive(false);
                 }
-                terrainManager.GenerateChunks(this.transform, "game terrain");
+                terrainManager.GenerateChunks(this.gameObject, "game terrain");
             }
         }
 
