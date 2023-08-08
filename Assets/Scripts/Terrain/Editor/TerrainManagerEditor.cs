@@ -9,19 +9,20 @@ using terrain;
 public class TerrainManagerEditor : Editor
 {
     public string[] terrainManagerOptions = new string[] { "None", "Global 1 LOD", "Player-Based 1 LOD" };
-    static bool terrainPropertiesToggleValue = false;
-    static bool toggleWireframe = false;
-    static int terrainManagerSelection = 0;
-    static int currentTerrainManagerSelection;
-    static UnityEngine.Object terrainProperties;
+    public int terrainManagerSelection = 0;
+    public int currentTerrainManagerSelection;
+    public bool terrainPropertiesToggleValue;
+    public UnityEngine.Object terrainProperties;
 
+    // public void OnMachin()
     public override void OnInspectorGUI()
     {
+        // Initialize the serializedObject and set it dirty so that the inspector saves its state
         serializedObject.Update();
         TerrainManagerMB terrainManagerMB = (TerrainManagerMB)target;
         EditorUtility.SetDirty(terrainManagerMB);
 
-        //------------------------|| CREATION OF THE TERRAIN MANAGER ||---------------------------//
+        //------------------------|| TERRAIN MANAGER CREATION ||---------------------------//
         EditorGUILayout.BeginHorizontal();
         terrainManagerSelection = EditorGUILayout.Popup("Terrain Manager :", terrainManagerSelection, terrainManagerOptions);
         EditorGUILayout.EndHorizontal();
@@ -31,19 +32,22 @@ public class TerrainManagerEditor : Editor
         EditorGUILayout.BeginHorizontal();
         if (GUILayout.Button("Set") && terrainProperties != null)
         {
+            SerializedProperty serializedTerrainManagerProperty = serializedObject.FindProperty("terrainManager");
             switch (terrainManagerSelection)
             {
                 case 0: // No manager selected
                     currentTerrainManagerSelection = 0;
                     break;
                 case 1: // Simple 1 LOD
-                    terrainManagerMB.terrainManager = new TerrainManager("Type 1");
-                    terrainManagerMB.terrainManager.terrainProperties = (TerrainProperties)terrainProperties;
+                    SimpleTerrainManager simpleTerrainManager = new SimpleTerrainManager(terrainManagerMB.transform.gameObject);
+                    simpleTerrainManager.terrainProperties = (TerrainProperties)terrainProperties;
+                    serializedTerrainManagerProperty.managedReferenceValue = simpleTerrainManager;
                     currentTerrainManagerSelection = 1;
                     break;
                 case 2: // Player-Based 1 LOD
-                    terrainManagerMB.terrainManager = new TerrainManager("Type 2");
-                    terrainManagerMB.terrainManager.terrainProperties = (TerrainProperties)terrainProperties;
+                    PlayerBasedTerrainManager playerBasedTerrainManager = new PlayerBasedTerrainManager(terrainManagerMB.transform.gameObject);
+                    playerBasedTerrainManager.terrainProperties = (TerrainProperties)terrainProperties;
+                    serializedTerrainManagerProperty.managedReferenceValue = playerBasedTerrainManager;
                     currentTerrainManagerSelection = 2;
                     break;
                 default:
@@ -53,40 +57,35 @@ public class TerrainManagerEditor : Editor
         }
         EditorGUILayout.EndHorizontal();
 
-
-        //------------------------|| OPTIONS OF THE TERRAIN MANAGER ONCE SET ||---------------------------//
+        //------------------------|| DISPLAY TERRAIN MANAGER PROPERTIES ||---------------------------//
         if (terrainManagerMB.terrainManager != null)
         {
-            UnityEngine.Debug.Log("TERRAIN MANAGER IS HERE");
             EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
-            // Setup the toggle of the properties
             EditorGUILayout.BeginHorizontal();
             terrainPropertiesToggleValue = EditorGUILayout.Toggle(terrainPropertiesToggleValue, GUILayout.Width(20f));
-            EditorGUILayout.LabelField("Terrain properties");
+            EditorGUILayout.LabelField("Terrain Manager");
             EditorGUILayout.EndHorizontal();
-            if (terrainPropertiesToggleValue)
+            if (terrainPropertiesToggleValue && terrainManagerMB.terrainManager != null)
             {
+                EditorGUILayout.TextField("Terrain Manager type", terrainManagerMB.terrainManager.GetType().ToString());
                 // Display the correct properties depending on the ITerrainManager implementation
-                switch (currentTerrainManagerSelection)
+                if (terrainManagerMB.terrainManager is SimpleTerrainManager)
                 {
-                    case 0: // No manager set
-                        break;
-                    case 1: // Simple 1 LOD
-                        EditorGUILayout.Separator();
-                        EditorGUI.indentLevel++;
-                        Vector3 terrainDimensions = EditorGUILayout.Vector3Field("Terrain Dimensions", terrainManagerMB.terrainManager.terrainProperties.terrainDimensions);
-                        Vector3 chunkSize = EditorGUILayout.Vector3Field("Chunk Size", terrainManagerMB.terrainManager.terrainProperties.chunkSize);
-                        terrainManagerMB.terrainManager.terrainProperties.terrainDimensions = terrainDimensions;
-                        terrainManagerMB.terrainManager.terrainProperties.chunkSize = chunkSize;
-                        EditorGUI.indentLevel--;
-                        break;
-                    case 2: // Player-Based 1 LOD
-                        EditorGUILayout.Separator();
-                        EditorGUI.indentLevel++;
-                        EditorGUI.indentLevel--;
-                        break;
-                    default:
-                        break;
+                    //Global 1 LOD
+                    EditorGUILayout.Separator();
+                    EditorGUI.indentLevel++;
+                    Vector3 terrainDimensions = EditorGUILayout.Vector3Field("Terrain Dimensions", terrainManagerMB.terrainManager.terrainProperties.terrainDimensions);
+                    Vector3 chunkSize = EditorGUILayout.Vector3Field("Chunk Size", terrainManagerMB.terrainManager.terrainProperties.chunkSize);
+                    terrainManagerMB.terrainManager.terrainProperties.terrainDimensions = terrainDimensions;
+                    terrainManagerMB.terrainManager.terrainProperties.chunkSize = chunkSize;
+                    EditorGUI.indentLevel--;
+                }
+                else if (terrainManagerMB.terrainManager is PlayerBasedTerrainManager)
+                {
+                    // Player-Based 1 LOD
+                    EditorGUILayout.Separator();
+                    EditorGUI.indentLevel++;
+                    EditorGUI.indentLevel--;
                 }
             }
         }
@@ -99,9 +98,10 @@ public class TerrainManagerEditor : Editor
             {
                 if (terrainManagerMB.terrainManager != null)
                 {
-                    terrainManagerMB.terrainManager.GenerateChunks(terrainManagerMB.gameObject, "editor terrain");
+                    terrainManagerMB.terrainManager.GenerateChunks("editor terrain");
                 }
             }
+            EditorGUILayout.LabelField("", GUI.skin.horizontalSlider);
         }
 
         //------------------------|| CONTROLS OF THE TERRAIN MANAGER ||---------------------------//
@@ -109,24 +109,13 @@ public class TerrainManagerEditor : Editor
         {
             EditorGUILayout.Separator();
             EditorGUILayout.BeginHorizontal();
-            toggleWireframe = EditorGUILayout.Toggle(toggleWireframe, GUILayout.Width(20f));
-            EditorGUILayout.LabelField("Toggle Wireframe");
+            EditorGUILayout.PropertyField(serializedObject.FindProperty("displayWireframe"));
             EditorGUILayout.EndHorizontal();
-            if (terrainManagerMB.terrainManager != null)
-            {
-                terrainManagerMB.displayWireframe = toggleWireframe;
-            }
-            else
-            {
-                terrainManagerMB.displayWireframe = false;
-                toggleWireframe = false;
-            }
         }
 
 
         serializedObject.ApplyModifiedProperties();
         Repaint();
-        // base.OnInspectorGUI();
     }
 
 }

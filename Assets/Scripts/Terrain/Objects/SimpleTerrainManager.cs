@@ -1,29 +1,34 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using terrain.Chunk;
 
 namespace terrain
 {
     // Terrain Manager Class
-    [CreateAssetMenu(fileName = "TerrainManager", menuName = "Terrain Manager")]
-    public class TerrainManager : ITerrainManager
+    [System.Serializable]
+    public class SimpleTerrainManager : ITerrainManager
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
 
-        [field: SerializeField] public TerrainProperties terrainProperties { get; set; }
-        [SerializeField] public string managerType { get; set; }
-        private Chunk.ChunkMB[] chunks;
+        [SerializeField] private TerrainProperties terrainProperties_;
+        public TerrainProperties terrainProperties { get => terrainProperties_; set => terrainProperties_ = value; }
+
+        [SerializeField] private ChunkMB[] chunks;
+        GameObject terrainManagerGO;
 
         //--------------------------|| METHODS ||----------------------------//
 
-        public TerrainManager() { }
-        public TerrainManager(string managerType_) { managerType = managerType_; }
+        public SimpleTerrainManager(GameObject terrainManagerGO_)
+        {
+            terrainManagerGO = terrainManagerGO_;
+            RegisterExistingTerrain();
+        }
 
-        //TODO : Let user chose the chunk generation type : fix, cameraField, radius
-        public void GenerateChunks(UnityEngine.GameObject terrainManager, string terrainName)
+        public void GenerateChunks(string terrainName)
         {
             //Create Terrain root GameObject
-            Transform previousTerrain = terrainManager.transform.Find(terrainName);
+            Transform previousTerrain = terrainManagerGO.transform.Find(terrainName);
             if (previousTerrain != null)
             {
                 UnityEngine.Debug.Log("Removing existing chunks");
@@ -31,11 +36,11 @@ namespace terrain
             }
             GameObject terrainGO = new GameObject(terrainName);
             terrainGO.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
-            terrainGO.transform.SetParent(terrainManager.transform);
+            terrainGO.transform.SetParent(terrainManagerGO.transform);
 
             // Populate the terrain with chunks
             int index = 0;
-            chunks = new Chunk.ChunkMB[(int)(terrainProperties.terrainDimensions[0] * terrainProperties.terrainDimensions[1] * terrainProperties.terrainDimensions[2])];
+            chunks = new ChunkMB[(int)(terrainProperties.terrainDimensions[0] * terrainProperties.terrainDimensions[1] * terrainProperties.terrainDimensions[2])];
             for (int chunkX = 0; chunkX < terrainProperties.terrainDimensions.x; chunkX++)
             {
                 for (int chunkY = 0; chunkY < terrainProperties.terrainDimensions.y; chunkY++)
@@ -47,10 +52,24 @@ namespace terrain
                         Vector3 chunkPosition = new Vector3(chunkX * (int)terrainProperties.chunkSize.x, chunkY * (int)terrainProperties.chunkSize.y, chunkZ * (int)terrainProperties.chunkSize.z);
                         chunkGO.transform.SetPositionAndRotation(chunkPosition, Quaternion.identity);
                         chunkGO.transform.SetParent(terrainGO.transform);
-                        chunkGO.AddComponent<Chunk.ChunkMB>();
-                        chunks[index] = chunkGO.GetComponent<Chunk.ChunkMB>();
+                        chunkGO.AddComponent<ChunkMB>();
+                        chunks[index] = chunkGO.GetComponent<ChunkMB>();
                         index++;
                     }
+                }
+            }
+        }
+
+        public void RegisterExistingTerrain()
+        {
+            if (terrainManagerGO.transform.childCount > 0)
+            {
+                Transform previousTerrain = terrainManagerGO.transform.GetChild(0);
+                chunks = new ChunkMB[previousTerrain.childCount];
+                for (int chunkIndex = 0; chunkIndex < previousTerrain.childCount; chunkIndex++)
+                {
+                    Transform chunkTransform = previousTerrain.GetChild(chunkIndex);
+                    chunks[chunkIndex] = chunkTransform.gameObject.GetComponent<ChunkMB>();
                 }
             }
         }

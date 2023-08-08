@@ -8,8 +8,8 @@ namespace terrain
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
 
-        public ITerrainManager terrainManager { get; set; }
-        public bool displayWireframe;
+        [SerializeReference] public ITerrainManager terrainManager;
+        [HideInInspector] public bool displayWireframe;
 
 
         //--------------------------|| METHODS ||----------------------------//
@@ -25,7 +25,7 @@ namespace terrain
                 {
                     editorTerrain.gameObject.SetActive(false);
                 }
-                terrainManager.GenerateChunks(this.gameObject, "game terrain");
+                terrainManager.GenerateChunks("game terrain");
             }
         }
 

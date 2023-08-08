@@ -15,7 +15,7 @@ namespace terrain.Chunk
 
 
         /* Called when the object or its parent get selected */
-        private void OnDrawGizmosSelected()
+        private void OnDrawGizmos()
         {
             Transform terrainManagerTransform = this.transform.parent.parent;
             if (terrainManagerTransform.GetComponent<TerrainManagerMB>().displayWireframe)
