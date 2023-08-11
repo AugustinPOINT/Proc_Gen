@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using UnityEditor.AnimatedValues;
-using terrain;
+using Terrain;
 
 [CustomEditor(typeof(TerrainManagerMB))]
 public class TerrainManagerEditor : Editor

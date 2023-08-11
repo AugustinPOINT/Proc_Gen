@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using terrain.Chunk;
-using System.Diagnostics;
 
-namespace terrain
+namespace Terrain
 {
     [CreateAssetMenu(fileName = "TerrainProperties", menuName = "Terrain Properties")]
     public class TerrainProperties : ScriptableObject

@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using terrain.Chunk;
+using Terrain.Chunk;
 
-namespace terrain
+namespace Terrain
 {
     // Terrain Manager Class
     [System.Serializable]
@@ -15,7 +15,7 @@ namespace terrain
         public TerrainProperties terrainProperties { get => terrainProperties_; set => terrainProperties_ = value; }
 
         [SerializeField] private ChunkMB[] chunks;
-        GameObject terrainManagerGO;
+        [SerializeField] private GameObject terrainManagerGO;
 
         //--------------------------|| METHODS ||----------------------------//
 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace terrain
+namespace Terrain
 {
     public class TerrainManagerMB : MonoBehaviour
     {
@@ -27,12 +27,17 @@ namespace terrain
                 }
                 terrainManager.GenerateChunks("game terrain");
             }
+            else
+            {
+                UnityEngine.Debug.LogWarning("No terrain manager has been set in the editor. No terrain could be created.");
+                return;
+            }
         }
 
         // Update is called once per frame
         void Update()
         {
-
+            terrainManager.ManageChunks();
         }
     }
 }

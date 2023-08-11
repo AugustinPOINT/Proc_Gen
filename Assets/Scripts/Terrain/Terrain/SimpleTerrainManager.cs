@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using terrain.Chunk;
+using Terrain.Chunk;
+using Terrain.Surfaces;
+using Terrain.Utils;
 
-namespace terrain
+namespace Terrain
 {
     // Terrain Manager Class
     [System.Serializable]
@@ -14,15 +16,23 @@ namespace terrain
         [SerializeField] private TerrainProperties terrainProperties_;
         public TerrainProperties terrainProperties { get => terrainProperties_; set => terrainProperties_ = value; }
 
-        [SerializeField] private ChunkMB[] chunks;
-        GameObject terrainManagerGO;
+        [SerializeField] private ChunkMB[] chunks;              // SerializeField allows the saving of the attribute between unity engine sessions
+        [SerializeField] private GameObject terrainManagerGO;
+        [SerializeField] private Isosurface ground;
+        [SerializeField] private Tools.surfaceDrawerAlgorithm algorithm = Tools.surfaceDrawerAlgorithm.SurfaceNets;
+        [SerializeField] private bool terrainGenerated;
 
         //--------------------------|| METHODS ||----------------------------//
 
         public SimpleTerrainManager(GameObject terrainManagerGO_)
         {
+            // Store reference to the attached gameObject
             terrainManagerGO = terrainManagerGO_;
+            // Register the already existing chunks
             RegisterExistingTerrain();
+            // Register the isosurface function (create it here for now, attach one in the future)
+            terrainGenerated = false;
+            ground = (Isosurface)ScriptableObject.CreateInstance(typeof(Isosurface));
         }
 
         public void GenerateChunks(string terrainName)
@@ -35,8 +45,8 @@ namespace terrain
                 GameObject.DestroyImmediate(previousTerrain.gameObject);
             }
             GameObject terrainGO = new GameObject(terrainName);
-            terrainGO.transform.SetPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
             terrainGO.transform.SetParent(terrainManagerGO.transform);
+            terrainGO.transform.SetLocalPositionAndRotation(new Vector3(0, 0, 0), Quaternion.identity);
 
             // Populate the terrain with chunks
             int index = 0;
@@ -50,10 +60,15 @@ namespace terrain
                         string chunkName = string.Format("chunk({0},{1},{2})", chunkX, chunkY, chunkZ);
                         GameObject chunkGO = new GameObject(chunkName);
                         Vector3 chunkPosition = new Vector3(chunkX * (int)terrainProperties.chunkSize.x, chunkY * (int)terrainProperties.chunkSize.y, chunkZ * (int)terrainProperties.chunkSize.z);
-                        chunkGO.transform.SetPositionAndRotation(chunkPosition, Quaternion.identity);
                         chunkGO.transform.SetParent(terrainGO.transform);
-                        chunkGO.AddComponent<ChunkMB>();
-                        chunks[index] = chunkGO.GetComponent<ChunkMB>();
+                        chunkGO.transform.SetLocalPositionAndRotation(chunkPosition, Quaternion.identity);
+                        // Add the MeshFilter and MeshRenderer components
+                        chunkGO.AddComponent<MeshFilter>();
+                        chunkGO.AddComponent<MeshRenderer>();
+                        // Add the ChunkMB component and initializes it. Note that the subdiv is decided by the manager, to choose a subdivision level in real-time if we want.
+                        ChunkMB chunkMB = chunkGO.AddComponent<ChunkMB>();
+                        chunks[index] = chunkMB;
+                        chunkMB.Initialize(new Vector3Int(chunkX, chunkY, chunkZ), terrainProperties.chunkSize[0], 2 * (int)terrainProperties.chunkSize[0]);
                         index++;
                     }
                 }
@@ -74,7 +89,20 @@ namespace terrain
             }
         }
 
-        public void ManageChunks() { }
+        public void ManageChunks()
+        {
+            if (!terrainGenerated)
+            {
+                for (int chunkIndex = 0; chunkIndex < chunks.Length; chunkIndex++)
+                {
+                    // Set the surface drawer algorithm
+                    chunks[chunkIndex].SetSurfaceDrawerAlgorithm(algorithm);
+                    // Generate the terrain
+                    chunks[chunkIndex].GenerateTerrain(ground);
+                }
+                terrainGenerated = true;
+            }
+        }
 
     }
 }

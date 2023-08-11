@@ -2,17 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace terrain.Chunk
+namespace Terrain.Utils
 {
-    // Terrain Manager Class
-    public class Chunk
+    // Terrain Tools Class
+    public static class Tools
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
+        public enum surfaceDrawerAlgorithm { SurfaceNets, MarchingCubes, DualContouring }
 
 
         //--------------------------|| METHODS ||----------------------------//
 
-        Chunk(Vector3 initialPosition_, float size, int subdivisions) { }
+
     }
 }
 
