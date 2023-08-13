@@ -15,7 +15,7 @@ namespace Terrain.Surfaces
         public float surfaceLevel_ = 0;
         public float surfaceLevel { get => surfaceLevel_; set => surfaceLevel_ = value; }
         public float scale = 4;
-        public Vector3 shift = new Vector3(16, 16, 16);
+        public Vector3 shift = new Vector3(0, 16, 16);
         public float Function(Vector3 position)
         {
             float x = (position.x - shift[0]) / scale;

@@ -13,6 +13,7 @@ namespace Terrain.Surfaces
 
         private List<Vector3> vertices;
         private List<int> triangles;
+        private List<Vector3> normals;
 
 
         //--------------------------|| METHODS ||----------------------------//
@@ -24,6 +25,7 @@ namespace Terrain.Surfaces
             // Initialize the arrays
             vertices = new List<Vector3>();
             triangles = new List<int>();
+            normals = new List<Vector3>();
 
             // Iterate over the voxels in the positive direction
             for (int x = 0; x < subdivisions; x++)

@@ -6,7 +6,7 @@ using UnityEditor.AnimatedValues;
 using Terrain;
 
 [CustomEditor(typeof(TerrainManagerMB))]
-public class TerrainManagerEditor : Editor
+public class TerrainManagerMBEditor : Editor
 {
     public string[] terrainManagerOptions = new string[] { "None", "Global 1 LOD", "Player-Based 1 LOD" };
     public int terrainManagerSelection = 0;

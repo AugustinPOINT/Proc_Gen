@@ -59,7 +59,7 @@ namespace Terrain
                     {
                         string chunkName = string.Format("chunk({0},{1},{2})", chunkX, chunkY, chunkZ);
                         GameObject chunkGO = new GameObject(chunkName);
-                        Vector3 chunkPosition = new Vector3(chunkX * (int)terrainProperties.chunkSize.x, chunkY * (int)terrainProperties.chunkSize.y, chunkZ * (int)terrainProperties.chunkSize.z);
+                        Vector3 chunkPosition = new Vector3(chunkX * terrainProperties.chunkSize.x, chunkY * terrainProperties.chunkSize.y, chunkZ * terrainProperties.chunkSize.z);
                         chunkGO.transform.SetParent(terrainGO.transform);
                         chunkGO.transform.SetLocalPositionAndRotation(chunkPosition, Quaternion.identity);
                         // Add the MeshFilter and MeshRenderer components

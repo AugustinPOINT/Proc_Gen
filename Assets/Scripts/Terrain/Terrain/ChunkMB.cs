@@ -43,23 +43,23 @@ namespace Terrain.Chunk
         }
 
         /* Draws the wireframe of the Chunk */
-        private void DrawWireRectangle(Vector3 origin, Vector3 size)
+        private void DrawWireRectangle(Vector3 origin, Vector3 dims)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(origin, origin + new Vector3(size.x, 0, 0));
-            Gizmos.DrawLine(origin + new Vector3(size.x, 0, 0), origin + new Vector3(size.x, size.y, 0));
-            Gizmos.DrawLine(origin + new Vector3(size.x, size.y, 0), origin + new Vector3(0, size.y, 0));
-            Gizmos.DrawLine(origin + new Vector3(0, size.y, 0), origin);
+            Gizmos.DrawLine(origin, origin + new Vector3(dims.x, 0, 0));
+            Gizmos.DrawLine(origin + new Vector3(dims.x, 0, 0), origin + new Vector3(dims.x, dims.y, 0));
+            Gizmos.DrawLine(origin + new Vector3(dims.x, dims.y, 0), origin + new Vector3(0, dims.y, 0));
+            Gizmos.DrawLine(origin + new Vector3(0, dims.y, 0), origin);
 
-            Gizmos.DrawLine(origin + new Vector3(0, 0, size.z), origin + new Vector3(size.x, 0, size.z));
-            Gizmos.DrawLine(origin + new Vector3(0, 0, size.z) + new Vector3(size.x, 0, 0), origin + new Vector3(size.x, size.y, size.z));
-            Gizmos.DrawLine(origin + new Vector3(0, 0, size.z) + new Vector3(size.x, size.y, 0), origin + new Vector3(0, size.y, size.z));
-            Gizmos.DrawLine(origin + new Vector3(0, size.y, size.z), origin + new Vector3(0, 0, size.z));
+            Gizmos.DrawLine(origin + new Vector3(0, 0, dims.z), origin + new Vector3(dims.x, 0, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(0, 0, dims.z) + new Vector3(dims.x, 0, 0), origin + new Vector3(dims.x, dims.y, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(0, 0, dims.z) + new Vector3(dims.x, dims.y, 0), origin + new Vector3(0, dims.y, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(0, dims.y, dims.z), origin + new Vector3(0, 0, dims.z));
 
-            Gizmos.DrawLine(origin, origin + new Vector3(0, 0, size.z));
-            Gizmos.DrawLine(origin + new Vector3(size.x, 0, 0), origin + new Vector3(size.x, 0, size.z));
-            Gizmos.DrawLine(origin + new Vector3(0, size.y, 0), origin + new Vector3(0, size.y, size.z));
-            Gizmos.DrawLine(origin + new Vector3(size.x, size.y, 0), origin + new Vector3(size.x, size.y, size.z));
+            Gizmos.DrawLine(origin, origin + new Vector3(0, 0, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(dims.x, 0, 0), origin + new Vector3(dims.x, 0, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(0, dims.y, 0), origin + new Vector3(0, dims.y, dims.z));
+            Gizmos.DrawLine(origin + new Vector3(dims.x, dims.y, 0), origin + new Vector3(dims.x, dims.y, dims.z));
         }
 
         public void SetSurfaceDrawerAlgorithm(Tools.surfaceDrawerAlgorithm algorithm)
