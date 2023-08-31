@@ -4,14 +4,12 @@ using UnityEngine;
 
 namespace Terrain.Surface
 {
-    [System.Serializable]
-    public abstract class SurfaceBuilder
+    public class SurfaceBuilder
     {
-        public abstract void Initialize();
+        public virtual void Initialize() { }
 
-        public abstract void ManageSurface();
+        public virtual void ManageSurface() { }
     }
 
-    [System.Serializable]
     public class SurfaceBuilderSettings { }
 }

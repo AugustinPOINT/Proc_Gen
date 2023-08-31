@@ -9,12 +9,16 @@ namespace Terrain.Surface
     public class Chunk : MonoBehaviour
     {
         //------------------------|| ATTRIBUTES ||---------------------------//
-        public Vector3Int index;
-        public Vector3 size;
-        public Vector3Int subdivisions;
-        public Vector3 globalPosition;
-        public IIsosurfaceDrawer isosurfaceDrawer;
+        private Vector3Int index;
+        private Vector3 size;
+        private Vector3Int subdivisions;
+        [SerializeField] private Vector3 globalPosition;
+        [SerializeField] private Vector3 localPosition;
         private MeshFilter meshFilter;
+        private MeshRenderer meshRenderer;
+        [SerializeField] private MeshData meshData;
+        [SerializeField] private bool displayPoints = true;
+        [SerializeField] private bool displayChunkWireframe = true;
 
         //-------------------------|| METHODS ||-----------------------------//
 
@@ -25,42 +29,54 @@ namespace Terrain.Surface
             size = size_;
             subdivisions = subdivisions_; //Maybe move this attribute inside the GenerateTerrain function
             globalPosition = this.transform.position;
+            localPosition = this.transform.localPosition;
             meshFilter = this.transform.GetComponent<MeshFilter>();
+            meshRenderer = this.transform.GetComponent<MeshRenderer>();
         }
 
-        public void SetSurfaceDrawerAlgorithm(Algorithm algorithm)
+        public void GenerateSurface(IIsosurfaceDrawer isosurfaceDrawer, IIsosurface isosurface)
         {
-            switch (algorithm)
-            {
-                case Algorithm.SurfaceNets:
-                    isosurfaceDrawer = new SurfaceNets();
-                    break;
-                case Algorithm.MarchingCubes:
-                    isosurfaceDrawer = new MarchingCubes();
-                    break;
-                case Algorithm.DualContouring:
-                    isosurfaceDrawer = new DualContouring();
-                    break;
-                case Algorithm.Transvoxel:
-                    isosurfaceDrawer = new Transvoxel();
-                    break;
-            }
+            // Compute the mesh
+            meshData = isosurfaceDrawer.ComputeMesh(size, subdivisions, localPosition, isosurface);
+            Mesh mesh = new Mesh();
+            mesh.name = "Procedural Mesh";
+            // Assign the vertices, triangles, (and uvs) to the mesh
+            mesh.SetVertices(meshData.vertices);
+            mesh.triangles = meshData.triangles.ToArray();
+
+            // Automatically compute normals
+            mesh.RecalculateNormals();
+
+            // Assign the mesh to the mesh filter
+            meshFilter.sharedMesh = mesh;
+
+            // Set material
+            meshRenderer.material = new Material(Shader.Find("Diffuse"));
         }
 
-        public void GenerateSurface(IIsosurface isosurface)
-        {
-            isosurfaceDrawer.ComputeMesh(size, subdivisions, globalPosition, isosurface);
-        }
-
+        /// <summary>
+        /// Draws the chunk information in the editor when it or its parent is selected
+        /// </summary>
         public void OnDrawGizmosSelected()
         {
             Transform terrainManagerTransform = this.transform.parent.parent;
             if (terrainManagerTransform.GetComponent<TerrainManager>().displayWireframe)
-            {
+            { // Draw the chunk borders on selection
                 DrawWireframe(globalPosition, size);
                 if (Selection.activeGameObject == this.gameObject)
                 {
-                    DrawGrid(globalPosition, size, subdivisions);
+                    if (displayChunkWireframe)
+                    { // Draw the chunk divisions only when the chunk is selected, and if the trigger is on
+                        DrawGrid(globalPosition, size, subdivisions);
+                    }
+                    if (displayPoints)
+                    { // Draws the triangulated points only when the chunk is selected, and if the trigger is on
+                        Gizmos.color = Color.red;
+                        for (int i = 0; i < meshData.vertices.Count; i++)
+                        {
+                            Gizmos.DrawSphere(meshData.vertices[i] + globalPosition, 0.1f);
+                        }
+                    }
                 }
             }
         }

@@ -5,17 +5,21 @@ using Terrain;
 
 namespace Terrain.Surface
 {
+    [System.Serializable]
     public class PlayerBasedSurfaceBuilder : SurfaceBuilder
     {
         public Transform parent;
-        public PlayerBasedSurfaceBuilderSettings settings;
         public Algorithm algorithm;
+        [SerializeReference] private IIsosurface ground;
 
-        public PlayerBasedSurfaceBuilder(Transform _parent, PlayerBasedSurfaceBuilderSettings _settings, Algorithm _algorithm)
+        public PlayerBasedSurfaceBuilderSettings settings;
+
+        public PlayerBasedSurfaceBuilder(Transform _parent, PlayerBasedSurfaceBuilderSettings _settings, Algorithm _algorithm, IIsosurface isosurface)
         {
             parent = _parent;
             settings = _settings;
             algorithm = _algorithm;
+            ground = isosurface;
         }
 
         public override void Initialize()

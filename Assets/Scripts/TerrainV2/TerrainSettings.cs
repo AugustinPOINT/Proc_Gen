@@ -10,6 +10,8 @@ namespace Terrain
         public SurfaceBuilderType surfaceBuilderType;
         [SerializeReference] public SurfaceBuilderSettings surfaceBuilderSettings;
         public Algorithm algorithm;
+        public IsosurfaceType isosurfaceType;
+        [SerializeReference] public IIsosurface isosurface;
     }
 
     public enum SurfaceBuilderType
@@ -24,5 +26,12 @@ namespace Terrain
         SurfaceNets,
         DualContouring,
         Transvoxel
+    }
+
+    public enum IsosurfaceType
+    {
+        Primitive,
+        Functional,
+        Composed,
     }
 }

@@ -1,16 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Terrain.Utils;
 
-namespace Terrain.Surfaces
+namespace Terrain.Surface
 {
-    [CreateAssetMenu(fileName = "Isosurface", menuName = "Isosurface")]
     /* Isosurface class.
         Will require later an editor to be able to instanciate such functions, with a given input string as the isosurface function.
         It can also be useful to add parameters such as scale, rotation.
     */
-    public class Isosurface : ScriptableObject, IIsosurface
+    public class SingularIsosurface : IIsosurface
     {
         public float surfaceLevel_ = 0;
         public float surfaceLevel { get => surfaceLevel_; set => surfaceLevel_ = value; }
@@ -23,7 +21,7 @@ namespace Terrain.Surfaces
             float z = (position.z - shift[2]) / scale;
             return Mathf.Min(Mathf.Pow(x, 2) + Mathf.Pow(y, 2) + Mathf.Pow(z, 2) - 9 // Sphere
                     , Mathf.Pow(x / 2, 2) + Mathf.Pow(z / 2, 2) - 1); //Cylinder
-            //return position.x + position.y + position.z;
+            // return Mathf.Abs(x) + Mathf.Abs(y) + Mathf.Abs(z) - 14;
             //return Mathf.Pow(position.x, 2) + Mathf.Pow(position.z, 2) + 10 - 2 * Mathf.Sin(position.y);
         }
 

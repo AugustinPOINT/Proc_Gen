@@ -7,9 +7,9 @@ namespace Terrain
 {
     public class TerrainManager : MonoBehaviour
     {
-        public SurfaceBuilder surfaceBuilder;
         [HideInInspector] public Algorithm algorithm;
         public bool displayWireframe = false;
+        [SerializeReference] public SurfaceBuilder surfaceBuilder = null;
 
         // Start is called before the first frame update
         void Start()
@@ -24,19 +24,19 @@ namespace Terrain
 
             // Set the surface builder
             algorithm = terrainSettings.algorithm;
+            IIsosurface isosurface = terrainSettings.isosurface;
             UnityEngine.Debug.Log("Setting the Surface Builder Algorithm to " + algorithm.ToString() + ".");
             switch (terrainSettings.surfaceBuilderType)
             {
                 case SurfaceBuilderType.Static:
-                    surfaceBuilder = new StaticSurfaceBuilder(this.transform, terrainSettings.surfaceBuilderSettings as StaticSurfaceBuilderSettings, algorithm);
+                    surfaceBuilder = new StaticSurfaceBuilder(this.transform, terrainSettings.surfaceBuilderSettings as StaticSurfaceBuilderSettings, algorithm, isosurface);
                     UnityEngine.Debug.Log("Creating a Static Surface Builder.");
                     break;
                 case SurfaceBuilderType.PlayerBased:
-                    surfaceBuilder = new PlayerBasedSurfaceBuilder(this.transform, terrainSettings.surfaceBuilderSettings as PlayerBasedSurfaceBuilderSettings, algorithm);
+                    surfaceBuilder = new PlayerBasedSurfaceBuilder(this.transform, terrainSettings.surfaceBuilderSettings as PlayerBasedSurfaceBuilderSettings, algorithm, isosurface);
                     UnityEngine.Debug.Log("Creating a Player-Based Surface Builder.");
                     break;
             }
-
             // Initialize the surface builder
             surfaceBuilder.Initialize();
         }

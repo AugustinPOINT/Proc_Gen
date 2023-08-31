@@ -2,24 +2,29 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Terrain;
+using Terrain.Surface.Drawer;
 
 namespace Terrain.Surface
 {
+    [System.Serializable]
     public class StaticSurfaceBuilder : SurfaceBuilder
     {
-        public Transform parent;
-        public StaticSurfaceBuilderSettings settings;
-        public Algorithm algorithm;
-        public Chunk[,,] chunks;
-        private string surfaceName = "surface";
-        private bool surfaceGenerated;
-        private IIsosurface ground;
+        private Transform parent;
+        private Algorithm algorithm;
+        [SerializeReference] private IIsosurface ground;
+        [SerializeField] private Chunk[,,] chunks;
+        [SerializeField] private string surfaceName = "surface";
+        [SerializeField] private bool surfaceGenerated;
 
-        public StaticSurfaceBuilder(Transform _parent, StaticSurfaceBuilderSettings _settings, Algorithm _algorithm)
+        private StaticSurfaceBuilderSettings settings;
+        [SerializeReference] private IIsosurfaceDrawer isosurfaceDrawer;
+
+        public StaticSurfaceBuilder(Transform _parent, StaticSurfaceBuilderSettings _settings, Algorithm _algorithm, IIsosurface isosurface)
         {
             parent = _parent;
             settings = _settings;
             algorithm = _algorithm;
+            ground = isosurface;
         }
 
         public override void Initialize()
@@ -32,12 +37,31 @@ namespace Terrain.Surface
         {
             if (!surfaceGenerated)
             {
+                SetSurfaceDrawerAlgorithm(algorithm);
                 foreach (Chunk chunk in chunks)
                 {
-                    chunk.SetSurfaceDrawerAlgorithm(algorithm);
-                    chunk.GenerateSurface(ground);
+                    chunk.GenerateSurface(isosurfaceDrawer, ground);
                 }
                 surfaceGenerated = true;
+            }
+        }
+
+        public void SetSurfaceDrawerAlgorithm(Algorithm algorithm)
+        {
+            switch (algorithm)
+            {
+                case Algorithm.SurfaceNets:
+                    isosurfaceDrawer = new SurfaceNets();
+                    break;
+                case Algorithm.MarchingCubes:
+                    isosurfaceDrawer = new MarchingCubes();
+                    break;
+                case Algorithm.DualContouring:
+                    isosurfaceDrawer = new DualContouring();
+                    break;
+                case Algorithm.Transvoxel:
+                    isosurfaceDrawer = new Transvoxel();
+                    break;
             }
         }
 

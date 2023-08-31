@@ -9,10 +9,11 @@ namespace Terrain.Surface.Drawer
         MeshData ComputeMesh(Vector3 size, Vector3Int subdivisions, Vector3 position, IIsosurface isosurface);
     }
 
+    [System.Serializable]
     public struct MeshData
     {
-        List<int> triangles;
-        List<Vector3> vertices;
-        List<Vector3> normals;
+        public List<int> triangles;
+        public List<Vector3> vertices;
+        public List<Vector3> normals;
     }
 }
