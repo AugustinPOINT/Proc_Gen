@@ -155,26 +155,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   surfaceBuilderType: 0
   surfaceBuilderSettings:
-    rid: 7262874936100782102
+    rid: 889141226424238141
   algorithm: 1
   isosurfaceType: 1
   isosurface:
-    rid: 7262875049749905611
+    rid: 889141226424238110
   references:
     version: 2
     RefIds:
-    - rid: 7262874936100782102
-      type: {class: StaticSurfaceBuilderSettings, ns: Terrain.Surface, asm: Assembly-CSharp}
-      data:
-        terrainSize: {x: 64, y: 64, z: 64}
-        terrainResolution: {x: 4, y: 4, z: 4}
-        chunkResolution: {x: 64, y: 64, z: 64}
-    - rid: 7262875049749905611
+    - rid: 889141226424238110
       type: {class: SingularIsosurface, ns: Terrain.Surface, asm: Assembly-CSharp}
       data:
         surfaceLevel_: 0
-        scale: 5
-        shift: {x: 32, y: 32, z: 32}
+        scale: 4
+        shift: {x: 16, y: 16, z: 16}
+    - rid: 889141226424238141
+      type: {class: StaticSurfaceBuilderSettings, ns: Terrain.Surface, asm: Assembly-CSharp}
+      data:
+        terrainSize: {x: 32, y: 32, z: 32}
+        terrainResolution: {x: 4, y: 4, z: 4}
+        chunkResolution: {x: 32, y: 32, z: 32}
 --- !u!114 &288092811
 MonoBehaviour:
   m_ObjectHideFlags: 0
